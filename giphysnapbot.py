@@ -148,16 +148,27 @@ if __name__ == "__main__":
     if slack_client.rtm_connect(with_team_state=False):
         print("Starter Bot connected and running!")
         # Read bot's user ID by calling Web API method `auth.test`
-        starterbot_id = slack_client.api_call("auth.test")["user_id"]
+        bot_id = slack_client.api_call("auth.test")["user_id"]
 
         previous_url = None
         previous_title = None
         while True:
             time.sleep(RTM_READ_DELAY)
-            title, url = read_slack_events(slack_client.rtm_read())
+            event = read_slack_events(slack_client.rtm_read())
 
-            if title == starterbot_id:
-                handle_command(url)
+            if event is None:
+                continue
+
+            if event["type"] == COMMAND:
+                handle_command(event["meta"]["message"])
+                continue
+
+            url = None
+            title = None
+            if event["type"] == INVOCATION:
+                url = event["meta"].get("url")
+                title = event["meta"].get("title")
+            else:
                 continue
 
             if url is None or title is None:
