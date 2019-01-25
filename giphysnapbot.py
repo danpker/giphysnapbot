@@ -1,15 +1,18 @@
+"""Entry code for the slackbot."""
 import os
 import re
 import time
 
-from slackclient import SlackClient
 from random_word import RandomWords
+from slackclient import SlackClient
 import giphy_client
+
+from rules import number_of_words
 
 
 # Initialise APIs and stuff
 r = RandomWords()
-slack_client = SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
+slack_client = SlackClient(os.environ.get("SLACK_BOT_TOKEN"))
 api_instance = giphy_client.DefaultApi()
 api_key = os.environ.get("GIPHY_API")
 bot_id = None
@@ -26,14 +29,6 @@ CHANNEL = os.environ.get("GIPHYSNAP_CHANNEL")
 # Event types
 INVOCATION = 1
 COMMAND = 2
-
-
-def number_of_words(string):
-    """Return the number of words in a string.
-
-    :param string: The string to check
-    """
-    return len(title.strip().split(" "))
 
 
 def any_match(first_string, second_string):
@@ -114,7 +109,7 @@ def parse_direct_mention(message_text):
 
 
 def handle_command(command):
-    """Executes bot command if the command is known"""
+    """Execute `command` as a bot command."""
     if command.startswith(START_COMMAND):
         # Create two random words
         term = "{} {}".format(r.get_random_word(), r.get_random_word())
