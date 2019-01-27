@@ -31,3 +31,13 @@ class GiphySnapBotBase():
         """Send `message` to `channel`."""
         self._slack_client.api_call(
             "chat.postMessage", channel=channel, text=message)
+
+    def send_image(self, channel, title, url):
+        """Send an image to channle using attachments to `channel`."""
+        attachment = {
+            "title": title,
+            "image_url": url,
+            "title_link": url,
+        }
+        self._slack_client.api_call(
+            "chat.postMessage", channel=channel, attachment=[attachment])

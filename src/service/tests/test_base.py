@@ -64,4 +64,24 @@ class GiphySnapBotBaseTestCase(unittest.TestCase):
 
         client.send_message("foo_channel", "bar_message")
 
-        mock_client.api_call.assert_called_once()
+        mock_client.api_call.assert_called_once_with(
+            "chat.postMessage", channel="foo_channel", text="bar_message")
+
+    @patch.object(GiphySnapBotBase, "_connect", return_value=MagicMock())
+    def test_send_image_will_send_post_message_api_call(self, mock_client):
+        """send_image() will send attachment via postMessage api call."""
+        # Get the right mock for client
+        mock_client = mock_client.return_value
+        client = GiphySnapBotBase(TEST_CONFIG)
+        mock_client.reset_mock()
+
+        client.send_image("foo_channel", "image_title", "image_url")
+
+        expected_attachment = {
+            "title": "image_title",
+            "image_url": "image_url",
+            "title_link": "image_url",
+        }
+        mock_client.api_call.assert_called_once_with(
+            "chat.postMessage", channel="foo_channel",
+            attachment=[expected_attachment])
