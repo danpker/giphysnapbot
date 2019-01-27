@@ -14,22 +14,21 @@ from service.base import GiphySnapBotBase
 
 TEST_CONFIG = {
     "slack_bot_token": "baby shark",
+    "default_channel": "foo_channel",
 }
 
 
 class GiphySnapBotBaseTestCase(unittest.TestCase):
     """Tests for GiphySnapBotBase."""
 
-    @patch.object(
-        base.SlackClient, "rtm_connect", return_value={"ok": True})
+    @patch.object(base.SlackClient, "rtm_connect", return_value=True)
     @patch.object(GiphySnapBotBase, "_get_user_id")
     def test_connect_will_return_slack_client(self, *args):
         """If Slack connection is ok, _connect() will return the client."""
         client = GiphySnapBotBase(TEST_CONFIG)
         self.assertEqual(client._slack_client.__class__, SlackClient)
 
-    @patch.object(
-        base.SlackClient, "rtm_connect", return_value={"error": "foo"})
+    @patch.object(base.SlackClient, "rtm_connect", return_value=False)
     def test_connection_error_will_raise_connection_error(self, *args):
         """If rtm_connect() fails, raise a ConnectionError."""
         with pytest.raises(ConnectionError):
@@ -42,7 +41,7 @@ class GiphySnapBotBaseTestCase(unittest.TestCase):
             return_value={"ok": True, "user_id": "mort"})
         client = GiphySnapBotBase(TEST_CONFIG)
 
-        self.assertEqual(client._bot_id, "mort")
+        self.assertEqual(client.bot_id, "mort")
 
     @patch.object(GiphySnapBotBase, "_connect", return_value=MagicMock())
     def test_get_user_id_will_raise_permission_error_if_response_not_ok(
@@ -62,7 +61,7 @@ class GiphySnapBotBaseTestCase(unittest.TestCase):
         client = GiphySnapBotBase(TEST_CONFIG)
         mock_client.reset_mock()
 
-        client.send_message("foo_channel", "bar_message")
+        client.send_message("bar_message")
 
         mock_client.api_call.assert_called_once_with(
             "chat.postMessage", channel="foo_channel", text="bar_message")
@@ -75,7 +74,7 @@ class GiphySnapBotBaseTestCase(unittest.TestCase):
         client = GiphySnapBotBase(TEST_CONFIG)
         mock_client.reset_mock()
 
-        client.send_image("foo_channel", "image_title", "image_url")
+        client.send_image("image_title", "image_url")
 
         expected_attachment = {
             "title": "image_title",
