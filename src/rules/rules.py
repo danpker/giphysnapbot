@@ -1,6 +1,27 @@
 """Code for validating invocations against the rules."""
 
 
+DUPLICATE_TERM = "You cannot use the same invocation twice!"
+TERM_LENGTH = "You must invoke using two words!"
+REPEAT_WORD = "You cannot repeat a word!"
+ILLEGAL_WORD = "You have used an illegal word!"
+
+
+def is_violation(previous_term, current_term):
+    """Return whether the `current_term` breaks any rules."""
+    if previous_term == current_term:
+        return DUPLICATE_TERM
+
+    if number_of_words(current_term) != 2:
+        return TERM_LENGTH
+
+    if any_match(previous_term, current_term):
+        return REPEAT_WORD
+
+    if illegal_words(current_term):
+        return ILLEGAL_WORD
+
+
 def number_of_words(string):
     """Return the number of words in a string.
 

@@ -4,7 +4,14 @@ import unittest
 from rules import (
     any_match,
     illegal_words,
+    is_violation,
     number_of_words,
+)
+from rules.rules import (
+    DUPLICATE_TERM,
+    ILLEGAL_WORD,
+    REPEAT_WORD,
+    TERM_LENGTH,
 )
 
 
@@ -68,3 +75,24 @@ class IllegalWordsTestCase(unittest.TestCase):
         string = "one two swift"
 
         self.assertTrue(string)
+
+
+class IsViolationTestCase(unittest.TestCase):
+    """Tests for is_violation()."""
+
+    def test_returns_error_if_repeats_last_turn(self):
+        """Returns error if `previous_term` is the same as `current_term`."""
+        self.assertEqual(is_violation("foo", "foo"), DUPLICATE_TERM)
+
+    def test_returns_error_if_not_two_words(self):
+        """Returns error if `current_term` is not 2 words."""
+        self.assertEqual(is_violation("foo", "one two three"), TERM_LENGTH)
+        self.assertEqual(is_violation("foo", "one"), TERM_LENGTH)
+
+    def test_returns_error_if_any_words_match(self):
+        """Returns error if any of the words match the previous term."""
+        self.assertEqual(is_violation("one two", "two three"), REPEAT_WORD)
+
+    def test_returns_error_if_illegal_word_used(self):
+        """Returns error if an illegal word was used."""
+        self.assertEqual(is_violation("one two", "three swift"), ILLEGAL_WORD)
