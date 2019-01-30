@@ -83,4 +83,4 @@ class GiphySnapBotBaseTestCase(unittest.TestCase):
         }
         mock_client.api_call.assert_called_once_with(
             "chat.postMessage", channel="foo_channel",
-            attachment=[expected_attachment])
+            attachments=[expected_attachment])
