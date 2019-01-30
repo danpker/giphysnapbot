@@ -73,4 +73,4 @@ class GiphySnapBotBase():
             "title_link": url,
         }
         self._slack_client.api_call(
-            "chat.postMessage", channel=channel, attachment=[attachment])
+            "chat.postMessage", channel=channel, attachments=[attachment])

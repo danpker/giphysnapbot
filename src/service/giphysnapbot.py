@@ -1,7 +1,9 @@
 """GiphySnapBot class for running the game."""
 import logging
 
-from service.base import GiphySnapBotBase
+from service.base import (
+    GiphySnapBotBase,
+)
 from service.utils import (
     is_direct_mention,
     is_invocation,
@@ -9,6 +11,10 @@ from service.utils import (
     parse_invocation,
 )
 from rules import is_violation
+from giphy.client import (
+    Giphy,
+    GiphyException,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -26,13 +32,29 @@ class GiphySnapBot(GiphySnapBotBase):
     def __init__(self, config):
         """Initalise GiphySnapBot and create a blank state."""
         super(GiphySnapBot, self).__init__(config)
+        self.giphy_client = Giphy(config["giphy_api_key"])
         self.reset_state()
 
     def reset_state(self):
         """Reset game state."""
+        logger.info("Reseting state")
         self.previous_player = None
         self.previous_term = None
         self.previous_url = None
+
+    def start_game(self):
+        logger.info("Starting new game")
+        self.reset_state()
+        term = self.giphy_client.get_random_term()
+
+        try:
+            gif = self.giphy_client.get_random_gif_for_term(term)
+        except GiphyException:
+            self.send_message("I couldn't find a gif for: {}".format(term))
+
+        logger.debug("Starting new game with: {}".format(term))
+
+        self.send_image(term, gif)
 
     def handle_event(self, event):
         """Handle a slack event."""
