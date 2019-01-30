@@ -43,6 +43,7 @@ class GiphySnapBot(GiphySnapBotBase):
         self.previous_url = None
 
     def start_game(self):
+        """Start a new game by resetting state and posting a starter gif."""
         logger.info("Starting new game")
         self.reset_state()
         term = self.giphy_client.get_random_term()
