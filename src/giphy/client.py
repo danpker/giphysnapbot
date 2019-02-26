@@ -2,7 +2,7 @@
 import logging
 
 import giphy_client
-from random_word import RandomWords
+from randomgenerator import randomwordgenerator
 
 
 logger = logging.getLogger(__name__)
@@ -21,14 +21,14 @@ class Giphy():
         """Create an API instance using the api_key."""
         self._api_key = api_key
         self._api_instance = giphy_client.DefaultApi()
-        self._random_words = RandomWords()
         logger.info("Started Giphy instance")
 
     def get_random_term(self):
         """Return a random, two word phrase."""
         term = "{} {}".format(
-            self._random_words.get_random_word(),
-            self._random_words.get_random_word())
+            randomwordgenerator.generate_random_words(n=1),
+            randomwordgenerator.generate_random_words(n=1),
+        )
         return term
 
     def get_random_gif_for_term(self, term):
