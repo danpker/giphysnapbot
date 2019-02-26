@@ -5,6 +5,7 @@ from giphy.client import Giphy
 
 
 class GiphyClientTestCase(unittest.TestCase):
+    """Tests for Client()."""
 
     def test_get_random_term_returns_two_words(self):
         """get_random_term() will return two words."""
